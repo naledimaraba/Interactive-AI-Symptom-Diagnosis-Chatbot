@@ -1,0 +1,67 @@
+# Interactive Rule-Based AI Chatbot for Symptom Diagnosis
+# Enhanced with menu selection, severity scoring, and logging for better interactivity.
+# This demonstrates AI-like logic using if-else rules, now with user-guided choices and feedback.
+
+import os
+
+def diagnose_symptom(symptom):
+    symptom = symptom.lower()
+    severity = 1  # Default low severity
+    if "fever" in symptom:
+        response = "You might have an infection. Rest and drink fluids."
+        severity = 3 if "high" in symptom else 2
+    elif "headache" in symptom:
+        response = "Could be stress or dehydration. Try relaxing and hydrating."
+        severity = 3 if "severe" in symptom else 1
+    elif "cough" in symptom:
+        response = "Possible cold or allergies. Use cough syrup."
+        severity = 2
+    else:
+        response = "Symptom not recognized. Describe it more clearly."
+        severity = 0
+    return response, severity
+
+def log_interaction(symptom, response, severity):
+    with open("chatbot_log.txt", "a") as log_file:
+        log_file.write(f"Symptom: {symptom} | Response: {response} | Severity: {severity}/3\n")
+
+# Menu for interactivity
+menu_options = {
+    "1": "Fever",
+    "2": "Headache",
+    "3": "Cough",
+    "4": "Custom symptom (type your own)",
+    "exit": "Exit"
+}
+
+# Main interaction loop
+print("Welcome to the Interactive AI Symptom Advisor!")
+print("Choose from the menu or type 'exit' to quit.")
+while True:
+    print("\nMenu:")
+    for key, value in menu_options.items():
+        print(f"{key}: {value}")
+    user_choice = input("Enter your choice: ").strip()
+    
+    if user_choice.lower() == "exit":
+        print("Goodbye! Check 'chatbot_log.txt' for your session history.")
+        break
+    elif user_choice in menu_options and user_choice != "4":
+        symptom = menu_options[user_choice]
+    elif user_choice == "4":
+        symptom = input("Describe your custom symptom: ")
+    else:
+        print("Invalid choice. Try again.")
+        continue
+    
+    response, severity = diagnose_symptom(symptom)
+    print(f"AI Advisor: {response}")
+    print(f"Estimated Severity: {severity}/3 (Higher means more urgent – see a doctor if 3!)")
+    log_interaction(symptom, response, severity)
+    
+    # Added feedback for interactivity
+    feedback = input("Was this helpful? (yes/no): ").lower()
+    if feedback == "yes":
+        print("Great! Thanks for the feedback.")
+    else:
+        print("Sorry! Try describing differently next time.")
